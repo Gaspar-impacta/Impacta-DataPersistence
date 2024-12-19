@@ -1,0 +1,44 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String    @unique
+  authors  Author[]
+  comments Comment[]
+}
+
+model Author {
+  id          Int     @id @default(autoincrement())
+  tags        String
+  surname     String
+  completeName String
+  userId      Int
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts       Post[]
+}
+
+model Post {
+  id       Int       @id @default(autoincrement())
+  title    String
+  text     String
+  authorId Int
+  author   Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments Comment[]
+}
+
+model Comment {
+  id      Int    @id @default(autoincrement())
+  text    String
+  userId  Int
+  postId  Int
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
